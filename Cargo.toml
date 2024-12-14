@@ -6,3 +6,7 @@ edition = "2021"
 [dependencies]
 embedded-hal = "1.0.0"
 heapless = "0.8"
+embassy-time = { version = "0.3.2", features = ["defmt", "defmt-timestamp-uptime"] }
+
+[patch.crates-io]
+embassy-time = { git = "https://github.com/embassy-rs/embassy.git", rev = "8954c053fbb0ce83d4bcdec4bf84a26874421696" }
