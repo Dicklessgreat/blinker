@@ -5,7 +5,7 @@ use heapless::Vec;
 
 pub struct Blinker<P: OutputPin, const N: usize> {
     pin: P,
-    schedule: Vec<Schedule, N>
+    schedule: Vec<Schedule, N>,
 }
 
 pub struct Schedule {
