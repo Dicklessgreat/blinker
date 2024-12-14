@@ -1,6 +1,6 @@
 #![no_std]
 
-use embassy_time::Duration;
+use embassy_time::{Duration, Timer};
 use embedded_hal::digital::StatefulOutputPin;
 use heapless::Vec;
 
@@ -9,14 +9,36 @@ pub struct Blinker<P: StatefulOutputPin, const N: usize> {
     schedule: Vec<Schedule, N>,
 }
 
+impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
+    pub fn new(pin: P) -> Self {
+        Self {
+            pin,
+            schedule: Vec::new(),
+        }
+    }
+    pub fn push_schedule(&mut self, schedule: Schedule) -> Result<(), Schedule> {
+        self.schedule.push(schedule)
+    }
+    pub async fn run(&mut self) {
+        if let Some(schedule) = self.schedule.first() {
+            match schedule.interval {
+                Form::Finite(count, dur) => todo!()
+                Form::Infinite(dur) => {
+                    self.pin.toggle();
+                    Timer::after(dur).await;
+                }
+            }
+        }
+    }
+}
+
 pub struct Schedule {
     pub interval: Form,
-    pub dur: Duration,
 }
 
 pub enum Form {
-    Infinite,
-    Finite(u32),
+    Infinite(Duration),
+    Finite(u32, Duration),
     // Sequence(Vec<, 2>),
     // Random(Vec<u32>),
 }
