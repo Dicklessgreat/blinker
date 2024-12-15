@@ -20,7 +20,7 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
         self.schedule.push(schedule)
     }
     pub async fn run(&mut self) -> Result<(), P::Error> {
-        if let Some(schedule) = self.schedule.first() {
+        if let Some(schedule) = self.schedule.last() {
             match schedule.interval {
                 Form::Finite(_, dur) | Form::Infinite(dur) => {
                     self.pin.toggle()?;
@@ -34,7 +34,7 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
 
     fn decrease_count(&mut self) {
         let mut should_pop = false;
-        if let Some(schedule) = self.schedule.first_mut() {
+        if let Some(schedule) = self.schedule.last_mut() {
             if let Form::Finite(ref mut count, _) = schedule.interval {
                 if let Some(c) = count.checked_sub(1) {
                     *count = c;
