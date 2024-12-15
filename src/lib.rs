@@ -119,12 +119,14 @@ mod tests {
     #[test]
     fn test_blinker_reset() {
         let expectations = [Transaction::set(State::Low)];
-        let pin = PinMock::new(&expectations);
-        let mut blinker = Blinker::<_, 2>::new(pin);
+        let mut pin = PinMock::new(&expectations);
+        let mut blinker = Blinker::<_, 2>::new(&mut pin);
 
         let _ = blinker.push_schedule(Schedule::Infinite(Duration::from_millis(100)));
 
         blinker.reset().expect("infallible");
         assert!(blinker.schedule.is_empty());
+        drop(blinker);
+        pin.done();
     }
 }
