@@ -68,11 +68,7 @@ mod tests {
 
     #[test]
     fn test_blinker_finite_schedule() {
-        let expectations = [
-            Transaction::set(State::Low),
-            Transaction::toggle(),
-            Transaction::toggle(),
-        ];
+        let expectations = [Transaction::toggle(), Transaction::toggle()];
         let pin = PinMock::new(&expectations);
         let mut blinker = Blinker::<_, 2>::new(pin);
 
