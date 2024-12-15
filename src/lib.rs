@@ -1,3 +1,47 @@
+//! no_std led blinking library for embedded systems.
+//!
+//! The library provides a `Blinker` struct that can control an output pin to create blinking patterns.
+//! It supports both finite and infinite blinking schedules with configurable durations.
+//!
+//! # Features
+//! - Async/await support
+//! - Configurable blink patterns through `Schedule`
+//! - Support for both finite and infinite blinking sequences
+//! - No heap allocation (uses heapless Vec)
+//!
+//! The main purpose of this library is to provide a simple and efficient way to control an led to create blinking patterns,
+//! but it can also be used for any purpose that requires toggling an output pin according to specific patterns.
+//!
+//! # Example
+//! ## blinks with 500ms interval
+//! ```ignore
+//! async fn blink_task(led_pin: impl StatefulOutputPin) {
+//!     let mut blinker = Blinker::<_, 1>::new(led_pin);
+//!     // Blink with 500ms interval
+//!     let _ = blinker.push_schedule(Schedule::Infinite(Duration::from_millis(500)));
+//!     // Run the blink pattern
+//!     loop {
+//!         let _ = blinker.step().await;
+//!     }
+//! }
+//! ```
+//! ## blinks faster when a button is pushed
+//! ```ignore
+//! async fn blink_task(led_pin: impl StatefulOutputPin, rx: Receiver<Event>) {
+//!     let mut blinker = Blinker::<_, 2>::new(led_pin);
+//!     // Blink with 500ms interval
+//!     let _ = blinker.push_schedule(Schedule::Ininite(Duration::from_millis(500)));
+//!     // Run the blink pattern
+//!     loop {
+//!         if let Either::Second(cmd) = select(blinker.step().await, rx.recv()).await {
+//!             if let Event::ButtonPushed = cmd {
+//!                 // ignore overflow
+//!                 let _ = blinker.push_schedule(Schedule::Ininite(Duration::from_millis(100)));
+//!             }
+//!         }
+//!     }
+//! }
+//! ```
 #![cfg_attr(not(test), no_std)]
 
 use embassy_time::{Duration, Timer};
