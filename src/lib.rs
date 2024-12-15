@@ -69,8 +69,8 @@ mod tests {
     #[test]
     fn test_blinker_finite_schedule() {
         let expectations = [Transaction::toggle(), Transaction::toggle()];
-        let pin = PinMock::new(&expectations);
-        let mut blinker = Blinker::<_, 2>::new(pin);
+        let mut pin = PinMock::new(&expectations);
+        let mut blinker = Blinker::<_, 2>::new(&mut pin);
 
         // 2回点滅するスケジュールを追加
         let _ = blinker.push_schedule(Schedule::Finite(2, Duration::from_millis(100)));
@@ -83,6 +83,8 @@ mod tests {
 
         // スケジュールが空になっているはず
         assert!(blinker.schedule.is_empty());
+        drop(blinker);
+        pin.done();
     }
 
     #[test]
@@ -93,8 +95,8 @@ mod tests {
             Transaction::toggle(),
             Transaction::toggle(),
         ];
-        let pin = PinMock::new(&expectations);
-        let mut blinker = Blinker::<_, 2>::new(pin);
+        let mut pin = PinMock::new(&expectations);
+        let mut blinker = Blinker::<_, 2>::new(&mut pin);
 
         // 無限スケジュールを追加
         let _ = blinker.push_schedule(Schedule::Infinite(Duration::from_millis(100)));
@@ -107,6 +109,8 @@ mod tests {
         });
         // スケジュールはまだ残っているはず
         assert!(!blinker.schedule.is_empty());
+        drop(blinker);
+        pin.done();
     }
 
     #[test]
