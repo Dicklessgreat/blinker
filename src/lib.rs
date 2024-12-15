@@ -26,10 +26,10 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
     }
     pub async fn step(&mut self) -> Result<(), P::Error> {
         if let Some(schedule) = self.schedule.last() {
-            match schedule.interval {
-                Interval::Finite(_, dur) | Interval::Infinite(dur) => {
+            match schedule {
+                Schedule::Finite(_, dur) | Schedule::Infinite(dur) => {
                     self.pin.toggle()?;
-                    Timer::after(dur).await;
+                    Timer::after(*dur).await;
                 }
             }
         }
@@ -39,13 +39,11 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
 
     fn decrease_count(&mut self) {
         let mut should_pop = false;
-        if let Some(schedule) = self.schedule.last_mut() {
-            if let Interval::Finite(ref mut count, _) = schedule.interval {
-                if let Some(c) = count.checked_sub(1) {
-                    *count = c;
-                } else {
-                    should_pop = true;
-                }
+        if let Some(Schedule::Finite(ref mut count, _)) = self.schedule.last_mut() {
+            if let Some(c) = count.checked_sub(1) {
+                *count = c;
+            } else {
+                should_pop = true;
             }
         }
         if should_pop {
@@ -54,11 +52,7 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
     }
 }
 
-pub struct Schedule {
-    pub interval: Interval,
-}
-
-pub enum Interval {
+pub enum Schedule {
     Infinite(Duration),
     Finite(u32, Duration),
     // Sequence(Vec<, 2>),
