@@ -9,7 +9,6 @@ heapless = "0.8"
 embassy-time = { version = "0.3.2" }
 
 [dev-dependencies]
-futures-lite = "2.5.0"
 embedded-hal-mock = "0.11.1"
 embassy-time = { version = "0.3.2", features = ["std", "generic-queue"] }
 embassy-futures = "0.1.1"

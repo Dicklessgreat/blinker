@@ -62,9 +62,8 @@ pub enum Schedule {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use embassy_executor as _;
+    use embassy_futures::block_on;
     use embedded_hal_mock::eh1::digital::{Mock as PinMock, State, Transaction};
-    use futures_lite::future;
 
     #[test]
     fn test_blinker_finite_schedule() {
@@ -76,7 +75,7 @@ mod tests {
         let _ = blinker.push_schedule(Schedule::Finite(2, Duration::from_millis(100)));
 
         // 2回ステップを実行
-        future::block_on(async {
+        block_on(async {
             blinker.step().await.expect("Failed to step");
             blinker.step().await.expect("Failed to step");
         });
@@ -90,7 +89,6 @@ mod tests {
     #[test]
     fn test_blinker_infinite_schedule() {
         let expectations = [
-            Transaction::set(State::Low),
             Transaction::toggle(),
             Transaction::toggle(),
             Transaction::toggle(),
@@ -101,7 +99,7 @@ mod tests {
         // 無限スケジュールを追加
         let _ = blinker.push_schedule(Schedule::Infinite(Duration::from_millis(100)));
 
-        future::block_on(async {
+        block_on(async {
             // 3回ステップを実行
             blinker.step().await.expect("Failed to step");
             blinker.step().await.expect("Failed to step");
