@@ -80,9 +80,9 @@ mod tests {
 
         // 3回ステップを実行
         block_on(async {
-            blinker.step().await.expect("Failed to step");
-            blinker.step().await.expect("Failed to step");
-            blinker.step().await.expect("Failed to step");
+            blinker.step().await.expect("infallible");
+            blinker.step().await.expect("infallible");
+            blinker.step().await.expect("infallible");
         });
 
         // スケジュールが空になっているはず
@@ -106,9 +106,9 @@ mod tests {
 
         block_on(async {
             // 3回ステップを実行
-            blinker.step().await.expect("Failed to step");
-            blinker.step().await.expect("Failed to step");
-            blinker.step().await.expect("Failed to step");
+            blinker.step().await.expect("infallible");
+            blinker.step().await.expect("infallible");
+            blinker.step().await.expect("infallible");
         });
         // スケジュールはまだ残っているはず
         assert!(!blinker.schedule.is_empty());
@@ -124,7 +124,7 @@ mod tests {
 
         let _ = blinker.push_schedule(Schedule::Infinite(Duration::from_millis(100)));
 
-        blinker.reset().expect("Failed to reset");
+        blinker.reset().expect("infallible");
         assert!(blinker.schedule.is_empty());
     }
 }
