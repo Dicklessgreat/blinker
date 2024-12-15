@@ -1,4 +1,4 @@
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 
 use embassy_time::{Duration, Timer};
 use embedded_hal::digital::StatefulOutputPin;
@@ -57,4 +57,71 @@ pub enum Schedule {
     Finite(u32, Duration),
     // Sequence(Vec<, 2>),
     // Random(Vec<u32>),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use embassy_executor as _;
+    use embedded_hal_mock::eh1::digital::{Mock as PinMock, State, Transaction};
+    use futures_lite::future;
+
+    #[test]
+    fn test_blinker_finite_schedule() {
+        let expectations = [
+            Transaction::set(State::Low),
+            Transaction::toggle(),
+            Transaction::toggle(),
+        ];
+        let pin = PinMock::new(&expectations);
+        let mut blinker = Blinker::<_, 2>::new(pin);
+
+        // 2回点滅するスケジュールを追加
+        let _ = blinker.push_schedule(Schedule::Finite(2, Duration::from_millis(100)));
+
+        // 2回ステップを実行
+        future::block_on(async {
+            blinker.step().await.expect("Failed to step");
+            blinker.step().await.expect("Failed to step");
+        });
+
+        // スケジュールが空になっているはず
+        assert!(blinker.schedule.is_empty());
+    }
+
+    #[test]
+    fn test_blinker_infinite_schedule() {
+        let expectations = [
+            Transaction::set(State::Low),
+            Transaction::toggle(),
+            Transaction::toggle(),
+            Transaction::toggle(),
+        ];
+        let pin = PinMock::new(&expectations);
+        let mut blinker = Blinker::<_, 2>::new(pin);
+
+        // 無限スケジュールを追加
+        let _ = blinker.push_schedule(Schedule::Infinite(Duration::from_millis(100)));
+
+        future::block_on(async {
+            // 3回ステップを実行
+            blinker.step().await.expect("Failed to step");
+            blinker.step().await.expect("Failed to step");
+            blinker.step().await.expect("Failed to step");
+        });
+        // スケジュールはまだ残っているはず
+        assert!(!blinker.schedule.is_empty());
+    }
+
+    #[test]
+    fn test_blinker_reset() {
+        let expectations = [Transaction::set(State::Low)];
+        let pin = PinMock::new(&expectations);
+        let mut blinker = Blinker::<_, 2>::new(pin);
+
+        let _ = blinker.push_schedule(Schedule::Infinite(Duration::from_millis(100)));
+
+        blinker.reset().expect("Failed to reset");
+        assert!(blinker.schedule.is_empty());
+    }
 }
