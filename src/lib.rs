@@ -67,15 +67,20 @@ mod tests {
 
     #[test]
     fn test_blinker_finite_schedule() {
-        let expectations = [Transaction::toggle(), Transaction::toggle()];
+        let expectations = [
+            Transaction::toggle(),
+            Transaction::toggle(),
+            Transaction::toggle(),
+        ];
         let mut pin = PinMock::new(&expectations);
         let mut blinker = Blinker::<_, 2>::new(&mut pin);
 
-        // 2回点滅するスケジュールを追加
+        // 3回点滅するスケジュールを追加
         let _ = blinker.push_schedule(Schedule::Finite(2, Duration::from_millis(100)));
 
-        // 2回ステップを実行
+        // 3回ステップを実行
         block_on(async {
+            blinker.step().await.expect("Failed to step");
             blinker.step().await.expect("Failed to step");
             blinker.step().await.expect("Failed to step");
         });
