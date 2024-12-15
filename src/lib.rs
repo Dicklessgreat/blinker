@@ -22,8 +22,7 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
     pub async fn run(&mut self) -> Result<(), P::Error> {
         if let Some(schedule) = self.schedule.first() {
             match schedule.interval {
-                Form::Finite(count, dur) => todo!(),
-                Form::Infinite(dur) => {
+                Form::Finite(_, dur) | Form::Infinite(dur) => {
                     self.pin.toggle()?;
                     Timer::after(dur).await;
                 }
