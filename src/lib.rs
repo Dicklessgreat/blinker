@@ -28,7 +28,24 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
                 }
             }
         }
+        self.decrease_count();
         Ok(())
+    }
+
+    fn decrease_count(&mut self) {
+        let mut should_pop = false;
+        if let Some(schedule) = self.schedule.first_mut() {
+            if let Form::Finite(ref mut count, _) = schedule.interval {
+                if let Some(c) = count.checked_sub(1) {
+                    *count = c;
+                } else {
+                    should_pop = true;
+                }
+            }
+        }
+        if should_pop {
+            self.schedule.pop();
+        }
     }
 }
 
