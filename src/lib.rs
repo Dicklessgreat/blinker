@@ -19,6 +19,11 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
     pub fn push_schedule(&mut self, schedule: Schedule) -> Result<(), Schedule> {
         self.schedule.push(schedule)
     }
+    pub fn reset(&mut self) -> Result<(), P::Error> {
+        self.pin.set_low()?;
+        self.schedule.clear();
+        Ok(())
+    }
     pub async fn step(&mut self) -> Result<(), P::Error> {
         if let Some(schedule) = self.schedule.last() {
             match schedule.interval {
