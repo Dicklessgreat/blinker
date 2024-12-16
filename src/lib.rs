@@ -107,6 +107,9 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
     }
 }
 
+/// A blinking schedule that can be pushed to the `Blinker`.
+/// This represents how you want to blink the pin.
+/// see `Blinker::push_schedule`.
 pub enum Schedule {
     Infinite(Duration),
     Finite(u32, Duration),
