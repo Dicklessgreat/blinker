@@ -111,7 +111,10 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
 /// This represents how you want to blink the pin.
 /// see `Blinker::push_schedule`.
 pub enum Schedule {
+    /// Periodically toggle the pin.
+    /// The duration is the time between toggles.
     Infinite(Duration),
+    /// Periodically toggle the pin a specified number of times.
     Finite(u32, Duration),
 }
 
