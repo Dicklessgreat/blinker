@@ -25,4 +25,4 @@ async fn blink_task(led_pin: impl StatefulOutputPin) {
 }
 ```
 
-See `src/lib.rs` for more examples.
+See [docs](https://docs.rs/blinker/latest/blinker/) for more details.

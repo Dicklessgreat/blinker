@@ -33,11 +33,9 @@
 //!     let _ = blinker.push_schedule(Schedule::Ininite(Duration::from_millis(500)));
 //!     // Run the blink pattern
 //!     loop {
-//!         if let Either::Second(cmd) = select(blinker.step().await, rx.recv()).await {
-//!             if let Event::ButtonPushed = cmd {
-//!                 // ignore overflow
-//!                 let _ = blinker.push_schedule(Schedule::Ininite(Duration::from_millis(100)));
-//!             }
+//!         if let Either::Second(Event::ButtonPushed) = select(blinker.step().await, rx.recv()).await {
+//!             // ignore overflow
+//!             let _ = blinker.push_schedule(Schedule::Ininite(Duration::from_millis(100)));
 //!         }
 //!     }
 //! }

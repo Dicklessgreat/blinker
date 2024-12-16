@@ -2,7 +2,7 @@
 name = "blinker"
 version = "0.1.0"
 edition = "2021"
-authors = ["DicklessGreat"]
+authors = ["DicklessGreat<dicklessgreat@gmail.com>"]
 description = "easily creating async blinky programs for embedded systems"
 keywords = ["embassy", "async", "blinky", "embedded", "no-std"]
 license = "MIT"
