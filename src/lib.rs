@@ -48,9 +48,7 @@ use embassy_time::{Duration, Timer};
 use embedded_hal::digital::StatefulOutputPin;
 use heapless::Vec;
 
-/// A struct that controls an output pin to create blinking patterns.
-///
-/// The `Blinker` struct supports both finite and infinite blinking schedules with configurable durations.
+/// controls an output pin to create blinking patterns.
 pub struct Blinker<P: StatefulOutputPin, const N: usize> {
     pin: P,
     schedule: Vec<Schedule, N>,
