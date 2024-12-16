@@ -113,8 +113,6 @@ impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
 pub enum Schedule {
     Infinite(Duration),
     Finite(u32, Duration),
-    // Sequence(Vec<, 2>),
-    // Random(Vec<u32>),
 }
 
 #[cfg(test)]
