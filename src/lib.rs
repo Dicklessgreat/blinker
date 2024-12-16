@@ -48,26 +48,37 @@ use embassy_time::{Duration, Timer};
 use embedded_hal::digital::StatefulOutputPin;
 use heapless::Vec;
 
+/// A struct that controls an output pin to create blinking patterns.
+///
+/// The `Blinker` struct supports both finite and infinite blinking schedules with configurable durations.
 pub struct Blinker<P: StatefulOutputPin, const N: usize> {
     pin: P,
     schedule: Vec<Schedule, N>,
 }
 
 impl<P: StatefulOutputPin, const N: usize> Blinker<P, N> {
+    /// Create a new `Blinker` struct
     pub fn new(pin: P) -> Self {
         Self {
             pin,
             schedule: Vec::new(),
         }
     }
+    /// Push a new schedule to the stack
+    /// Returns an error if the stack is full
     pub fn push_schedule(&mut self, schedule: Schedule) -> Result<(), Schedule> {
         self.schedule.push(schedule)
     }
+    /// Clears schedules and sets the pin to low.
+    /// Returns an error if the pin is in a bad state(check if your environment supports "infallible" GPIO operations)
     pub fn reset(&mut self) -> Result<(), P::Error> {
         self.pin.set_low()?;
         self.schedule.clear();
         Ok(())
     }
+    /// Executes one step of the schedule that is on the top of the stack.
+    /// If there is no schedule, does nothing(so be careful if you call this function in a loop).
+    /// Returns an error if the pin is in a bad state(check if your environment supports "infallible" GPIO operations).
     pub async fn step(&mut self) -> Result<(), P::Error> {
         if let Some(schedule) = self.schedule.last() {
             match schedule {
