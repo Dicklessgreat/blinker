@@ -1,13 +1,13 @@
 //! no_std led blinking library for embedded systems.
 //!
-//! The library provides a `Blinker` struct that can control an output pin to create blinking patterns.
-//! It supports both finite and infinite blinking schedules with configurable durations.
+//! provides a [`Blinker`] struct that can control an output pin to create blinking patterns,
+//! and supports both finite and infinite blinking [`Schedule`]s with configurable durations.
 //!
 //! # Features
-//! - Async/await support
-//! - Configurable blink patterns through `Schedule`
+//! - async/await support
+//! - Configurable blink patterns through [`Schedule`]
 //! - Support for both finite and infinite blinking sequences
-//! - No heap allocation (uses heapless Vec)
+//! - No heap allocation (uses [heapless::Vec](https://docs.rs/heapless/latest/heapless/struct.Vec.html))
 //!
 //! The main purpose of this library is to provide a simple and efficient way to control an led to create blinking patterns,
 //! but it can also be used for any purpose that requires toggling an output pin according to specific patterns.

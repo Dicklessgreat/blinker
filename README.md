@@ -7,7 +7,7 @@ A no_std led blinking library for embedded systems.
 - Async/await support
 - Configurable blink patterns through `Schedule`
 - Support for both finite and infinite blinking sequences
-- No heap allocation (uses heapless Vec)
+- No heap allocation (uses [heapless](https://github.com/rust-embedded/heapless.git) Vec)
 
 ```rust
 use blinker::{Blinker, Schedule};
